@@ -183,6 +183,36 @@ open class AmazonS3RequestManager {
         return requestManager.upload(data, with: putRequest)
     }
     
+    /**
+     Uploads an object to the Amazon S3 service with the given inputstream.
+     
+     :note: The user for the manager's Amazon S3 credentials must have read access to the bucket
+     
+     - parameter inputStream:     The `InputStream` for the object to upload
+     - parameter to:              The desired destination path, including the file name and extension, in the Amazon S3 bucket
+     - parameter acl:             The optional access control list to set the acl headers for the request.
+     For more information see `ACL`.
+     - parameter metaData:        An optional dictionary of meta data that should be assigned to the object to be uploaded.
+     
+     - parameter storageClass:    The optional storage class to use for the object to upload. If none is specified,
+     standard is used. For more information see `StorageClass`.
+     
+     - returns: An upload request for the object
+     */
+    open func upload(_ inputStream: InputStream,
+                     to destinationPath: String,
+                     acl: ACL? = nil,
+                     metaData:[String : String]? = nil,
+                     storageClass: StorageClass = .standard) -> UploadRequest {
+        let putRequest = requestSerializer.amazonURLRequest(method: .put,
+                                                            path: destinationPath,
+                                                            acl: acl,
+                                                            metaData: metaData,
+                                                            storageClass: storageClass)
+        
+        return requestManager.upload(inputStream, with: putRequest)
+    }
+    
     // MARK: HEAD Object Request
     
     /**
